@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:flutter/services.dart';
 import 'package:invoice_generator/myinvoice.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
@@ -13,25 +14,33 @@ class PdfData {
 
   Future<Uint8List> getPdf() async {
     var document = Document();
-    int amount=0;
+    final img = await rootBundle.load("img/logo.png");
+    final imageBytes = img.buffer.asUint8List();
+    int amount = 0;
     int gsttotal = 0;
     int cesstotal = 0;
     for (int i = 0; i < invoice.price.length; i++) {
-      amount += (int.tryParse(invoice.price[i]) ?? 0) * (int.tryParse(invoice.quantity[i]) ?? 0);
+      amount += (int.tryParse(invoice.price[i]) ?? 0) *
+          (int.tryParse(invoice.quantity[i]) ?? 0);
     }
     for (int i = 0; i < invoice.gst.length; i++) {
-      gsttotal += int.tryParse(invoice.gst[i])??0;
+      gsttotal += int.tryParse(invoice.gst[i]) ?? 0;
     }
     for (var i = 0; i < invoice.cess.length; i++) {
       cesstotal += int.tryParse(invoice.cess[i]) ?? 0;
     }
 
-    int total=amount+gsttotal+cesstotal;
+    int total = amount + gsttotal + cesstotal;
 
     document.addPage(Page(build: (context) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Image(MemoryImage(imageBytes), height: 95, width: 95),
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text("India", style: TextStyle(fontSize: 20)),
+          Padding(
+            padding: EdgeInsets.only(left:10),
+            child: Text("India", style: TextStyle(fontSize: 20)),
+          ),
+          SizedBox(height: 5),
           Text("Tax Invoice", style: TextStyle(fontSize: 40))
         ]),
         SizedBox(height: 35),
@@ -42,15 +51,15 @@ class PdfData {
               padding: const EdgeInsets.only(top: 10),
               child: RichText(
                   text: TextSpan(children: [
-                    TextSpan(
-                        text: "invoice Number  ",
-                        style:
+                TextSpan(
+                    text: "invoice Number  ",
+                    style:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    TextSpan(
-                        text: "INV-${invoice.invnum}",
-                        style:
+                TextSpan(
+                    text: "INV-${invoice.invnum}",
+                    style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
-                  ])))
+              ])))
         ]),
         SizedBox(height: 25),
         Text("${invoice.name}", style: TextStyle(fontSize: 19)),
@@ -59,15 +68,13 @@ class PdfData {
           Text("${invoice.address}", style: TextStyle(fontSize: 19)),
           RichText(
               text: TextSpan(children: [
-                TextSpan(
-                    text: "invoice Date  ",
-                    style: TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold)),
-                TextSpan(
-                    text: "${invoice.invoiceDate}",
-                    style: TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.normal)),
-              ]))
+            TextSpan(
+                text: "invoice Date  ",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            TextSpan(
+                text: "${invoice.invoiceDate}",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
+          ]))
         ]),
         SizedBox(height: 5),
         Text("${invoice.city}, ${invoice.state2}, ${invoice.code}",
@@ -79,29 +86,26 @@ class PdfData {
           Text("${invoice.country}", style: TextStyle(fontSize: 19)),
           RichText(
               text: TextSpan(children: [
-                TextSpan(
-                    text: "Due Date  ",
-                    style: TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold)),
-                TextSpan(
-                    text: "${invoice.dueDate}",
-                    style: TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.normal)),
-              ]))
+            TextSpan(
+                text: "Due Date  ",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            TextSpan(
+                text: "${invoice.dueDate}",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
+          ]))
         ]),
         SizedBox(height: 5),
         Text("GSTIN ${invoice.gstin}", style: TextStyle(fontSize: 19)),
         SizedBox(height: 20),
         RichText(
             text: TextSpan(children: [
-              TextSpan(
-                  text: "Place of Supply:  ",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              TextSpan(
-                  text: "${invoice.state1}",
-                  style: TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.normal)),
-            ])),
+          TextSpan(
+              text: "Place of Supply:  ",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          TextSpan(
+              text: "${invoice.state1}",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
+        ])),
         SizedBox(height: 20),
         Container(
             height: 60,
@@ -129,7 +133,7 @@ class PdfData {
                   style: TextStyle(color: PdfColors.white, fontSize: 15)),
             ])),
         SizedBox(height: 10),
-        Row(children: [
+        Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           SizedBox(width: 10),
           Column(children: [
             for (int i = 0; i < invoice.products.length; i++)
@@ -140,12 +144,12 @@ class PdfData {
             for (int i = 0; i < invoice.quantity.length; i++)
               Text("${invoice.quantity[i]}", style: TextStyle(fontSize: 18)),
           ]),
-          SizedBox(width: 60),
+          SizedBox(width: 50),
           Column(children: [
             for (int i = 0; i < invoice.price.length; i++)
               Text("${invoice.price[i]}", style: TextStyle(fontSize: 18)),
           ]),
-          SizedBox(width: 30),
+          SizedBox(width: 25),
           Column(children: [
             for (int i = 0; i < invoice.price.length; i++)
               Text("5.00", style: TextStyle(fontSize: 20)),
@@ -159,7 +163,9 @@ class PdfData {
           Column(
             children: [
               for (int i = 0; i < invoice.price.length; i++)
-                Text("${(int.tryParse(invoice.price[i]) ?? 0) * (int.tryParse(invoice.quantity[i]) ?? 0)}",style: TextStyle(fontSize: 20)),
+                Text(
+                    "${(int.tryParse(invoice.price[i]) ?? 0) * (int.tryParse(invoice.quantity[i]) ?? 0)}",
+                    style: TextStyle(fontSize: 20)),
             ],
           ),
         ]),

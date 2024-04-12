@@ -671,33 +671,55 @@ class _HomeState extends State<Home> {
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 130, top: 10),
-                                        child: Text(
+                                  Padding(
+                                    padding: const EdgeInsets.all(15),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        InkWell(
+                                          onTap: () {
+                                            for (var element in productlist) {
+                                              element.clear();
+                                            }
+                                            for (var element in pricelist) {
+                                              element.clear();
+                                            }
+                                            for (var element in qunlist) {
+                                              element.clear();
+                                            }
+                                            for (var element in gstlist) {
+                                              element.clear();
+                                            }
+                                            for (var element in cesslist) {
+                                              element.clear();
+                                            }
+                                          },
+                                          child: Text(
+                                            "Clear",
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.red,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ),
+                                        Text(
                                           "Item Details",
                                           style: TextStyle(
                                               fontSize: 25,
                                               fontWeight: FontWeight.w500),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 20),
-                                        child: InkWell(
-                                            onTap: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Icon(Icons.close)),
-                                      )
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 10,
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 20),
+                                          child: InkWell(
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Icon(Icons.close)),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                   Divider(),
                                   Padding(
